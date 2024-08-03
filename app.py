@@ -23,3 +23,21 @@ def question1():
     return render_template('question1.html')
 
 
+@app.route('/question2', methods=['GET', 'POST'])
+def question2():
+    conn = sqlite3.connect('election.db')
+    cursor = conn.cursor()
+    if request.method == 'POST':
+        lga_id = request.form['lga_id']
+        cursor.execute("""
+            SELECT party_abbreviation, SUM(party_score)
+            FROM announced_pu_results
+            WHERE polling_unit_uniqueid IN (
+                SELECT uniqueid FROM polling_unit WHERE lga_id=?
+            )
+            GROUP BY party_abbreviation
+        """, (lga_id,))
+        data = cursor.fetchall()
+        return render_template('question2.html', data=data)
+    return render_template('question2.html')
+
