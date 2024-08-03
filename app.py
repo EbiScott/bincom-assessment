@@ -9,3 +9,17 @@ def index():
 
 if __name__ == '__main__':
     app.run(debug=True)
+
+
+@app.route('/question1', methods=['GET', 'POST'])
+def question1():
+    conn = sqlite3.connect('election.db')
+    cursor = conn.cursor()
+    if request.method == 'POST':
+        polling_unit_id = request.form['polling_unit_id']
+        cursor.execute("SELECT * FROM polling_unit WHERE polling_unit_id=?", (polling_unit_id,))
+        data = cursor.fetchall()
+        return render_template('question1.html', data=data)
+    return render_template('question1.html')
+
+
