@@ -41,3 +41,14 @@ def question2():
         return render_template('question2.html', data=data)
     return render_template('question2.html')
 
+@app.route('/question3', methods=['GET', 'POST'])
+def question3():
+    conn = sqlite3.connect('election.db')
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT party_abbreviation, SUM(party_score)
+        FROM announced_pu_results
+        GROUP BY party_abbreviation
+    """)
+    data = cursor.fetchall()
+    return render_template('question3.html', data=data)
